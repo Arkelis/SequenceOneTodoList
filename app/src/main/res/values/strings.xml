@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Todo List</string>
+    <string name="pseudo">Pseudo</string>
+    <string name="ok">Ok</string>
+    <string name="list_name">Nouvelle liste</string>
+    <string name="item_title">Nouvel item</string>
+</resources>

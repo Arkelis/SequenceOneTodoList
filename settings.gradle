@@ -1,0 +1,2 @@
+rootProject.name='Sequence 1 Todo List'
+include ':app'
