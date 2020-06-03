@@ -1,7 +1,6 @@
 package com.example.sequenceonetodolist
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,7 +16,10 @@ import com.example.sequenceonetodolist.model.ProfilListeToDo
 import com.google.gson.Gson
 import java.io.File
 
-class ChooseListActivity : AppCompatActivity() {
+/**
+ * Activité permettant à l'utilisateur de créer ou d'afficher une liste.
+ */
+class ChooseListActivity : BaseActivity() {
 
     lateinit var btnOkList: Button
     lateinit var listField: TextView
@@ -60,6 +62,10 @@ class ChooseListActivity : AppCompatActivity() {
         listField = findViewById(R.id.input_list)
     }
 
+    /**
+     * Ajoute la liste au profil de l'utilisateur si une liste du même nom n'existe pas déjà
+     * puis met à jour le fichier json
+     */
     fun addNewList() {
         val listName = listField.text.toString()
         for (liste in profil.listesToDo) {
@@ -73,6 +79,9 @@ class ChooseListActivity : AppCompatActivity() {
         recyclerView.adapter?.notifyDataSetChanged()
     }
 
+    /**
+     * Ouvre l'activité ShowListActivity en passant le pseudo et le numéro de liste à afficher.
+     */
     fun openList(position: Int) {
         val b = Bundle()
         b.putString("pseudo", profil.login)

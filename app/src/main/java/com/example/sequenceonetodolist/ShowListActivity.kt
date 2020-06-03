@@ -5,17 +5,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sequenceonetodolist.model.ItemToDo
 import com.example.sequenceonetodolist.model.ListeToDo
 import com.example.sequenceonetodolist.model.ProfilListeToDo
 import com.google.gson.Gson
 import java.io.File
 
-class ShowListActivity : AppCompatActivity() {
+/**
+ * Activité affichant une todo list
+ */
+class ShowListActivity : BaseActivity() {
 
     lateinit var userFile: File
     lateinit var profil: ProfilListeToDo
@@ -29,20 +33,24 @@ class ShowListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_todo_list)
 
 
-        // Récupération du pseudo transmis par la MainActivity
+        // Récupération du pseudo et de l'indice de la liste transmis par la ChooseListActivity
         val bundle = this.intent.extras
         val pseudo = bundle!!.getString("pseudo")
         val listPosition = bundle!!.getInt("list_position")
         val gson = Gson()
+
+        // En se basant sur ces deux informations on récupère la bonne liste dans le fichier json
         userFile = File(this.filesDir, "$pseudo.json")
         profil = gson.fromJson(userFile.readText(), ProfilListeToDo::class.java)
         list = profil.listesToDo[listPosition]
-        Log.e("App", list.toString())
 
-        // Création de la recycler view avec les items de l'utilisateur
+        // Création de la recycler view avec les items de la todo list
         recyclerView = findViewById(R.id.todo_list)
+        // on passe l'activité à l'adapter pour que celui-ci ait une référence vers la méthode
+        // toggleItem()
         val adapter = TodoListAdapter(list, this)
         recyclerView.adapter = adapter
+
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Listener bouton
@@ -52,19 +60,24 @@ class ShowListActivity : AppCompatActivity() {
         itemField = findViewById(R.id.input_item)
     }
 
+    /**
+     * Ajoute l'item s'il n'existe pas déjà et met à jour le fichier json
+     */
     fun addNewItem() {
         val itemDescription = itemField.text.toString()
-        for (item in list.getItems()) {
-            if (item.description == itemDescription) {
-                Toast.makeText(this, "Ce nom est déjà pris.", Toast.LENGTH_SHORT).show()
-                return
-            }
+        val ajouté: Boolean = list.ajouterItem(itemDescription)
+        if (ajouté) {
+            userFile.writeText(Gson().toJson(profil, ProfilListeToDo::class.java))
+            recyclerView.adapter?.notifyDataSetChanged()
+        } else {
+            Toast.makeText(this, "Ce nom est déjà pris.", Toast.LENGTH_SHORT).show()
         }
-        list.ajouterItem(ItemToDo(itemDescription))
-        userFile.writeText(Gson().toJson(profil, ProfilListeToDo::class.java))
-        recyclerView.adapter?.notifyDataSetChanged()
     }
 
+    /**
+     * Coche ou décoche un item (change sa valeur de l'attribut "fait") et met à jour le fichier
+     * json
+     */
     fun toggleItem(position: Int, boolean: Boolean) {
         list.toggleItem(position, boolean)
         userFile.writeText(Gson().toJson(profil, ProfilListeToDo::class.java))
@@ -93,6 +106,7 @@ class TodoListAdapter(private val dataSet: ListeToDo, private val activity: Show
         fun bind(description: String, fait: Boolean, activity: ShowListActivity, position: Int) {
             checkBox.text = description
             checkBox.isChecked = fait
+            // appelle la méthode toggleItem() de l'activité en cas de (dé)cochage d'un item.
             checkBox.setOnCheckedChangeListener {_, boolean: Boolean -> activity.toggleItem(position, boolean) }
         }
     }
