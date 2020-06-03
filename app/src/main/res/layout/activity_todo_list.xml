@@ -15,6 +15,7 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/item_title"
+        android:selectAllOnFocus="true"
         app:layout_constraintBottom_toBottomOf="@+id/btn_item_ok"
         app:layout_constraintEnd_toStartOf="@+id/btn_item_ok"
         app:layout_constraintStart_toStartOf="parent"

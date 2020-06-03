@@ -1,0 +1,42 @@
+package com.example.sequenceonetodolist
+
+import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager.getDefaultSharedPreferences
+import java.io.File
+
+class SettingsActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.settings_activity)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.settings, SettingsFragment())
+            .commit()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    class SettingsFragment : PreferenceFragmentCompat() {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        }
+    }
+
+    fun onClearUsers(view: View) {
+        val userFile = File(filesDir, getString(R.string.users_filename))
+        if (!userFile.exists()) return
+        for (line in userFile.readLines()) {
+            val listFile = File(filesDir, "$line.json")
+            if (listFile.exists())
+                listFile.delete()
+        }
+        userFile.delete()
+        with (getDefaultSharedPreferences(this).edit()) {
+            putString("defaultUser", "Pseudo")
+            commit()
+        }
+    }
+}
