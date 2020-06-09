@@ -2,9 +2,15 @@ package com.example.sequenceonetodolist
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
+import com.example.sequenceonetodolist.data.DataProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.io.File
 
 /**
@@ -13,6 +19,10 @@ import java.io.File
 class MainActivity : BaseActivity() {
     private lateinit var pseudoField: EditText
     private lateinit var btnPseudoOk: Button
+
+    val activityScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Main
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +43,10 @@ class MainActivity : BaseActivity() {
 
         // Ajout de l'utilisateur à la liste des utilisateurs connus s'il n'est pas déjà présent
         val pseudoFile = File(this.filesDir, getString(R.string.users_filename))
+        activityScope.launch {
+            val hash = DataProvider.login("guillaume", "123")
+            Log.e("App", hash.toString())
+        }
         val fileJustCreated: Boolean = pseudoFile.createNewFile()
         val lines = pseudoFile.readLines()
         var found = false
