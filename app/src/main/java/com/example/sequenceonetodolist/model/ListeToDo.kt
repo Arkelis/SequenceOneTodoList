@@ -22,9 +22,9 @@ class ListeToDo(val titre: String, private val items: MutableList<ItemToDo> = mu
      * Si l'item est ajouté, renvoie true, sinon false
      * @param item l'item à ajouter
      */
-    fun ajouterItem(description: String): Boolean {
+    fun ajouterItem(id: Long, description: String): Boolean {
         if (this.rechercherItem(description)) return false
-        this.items.add(ItemToDo(description))
+        this.items.add(ItemToDo(id, description))
         return true
     }
 

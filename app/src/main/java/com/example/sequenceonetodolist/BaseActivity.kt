@@ -4,11 +4,18 @@ import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 /**
  * Activité de base qui gère le menu Android
  */
 open class BaseActivity : AppCompatActivity() {
+
+    val activityScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Main
+    )
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)

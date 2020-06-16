@@ -22,4 +22,5 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="preferences">Préférences</string>
     <string name="users_filename">knownUsers</string>
+    <string name="password">Mot de passe</string>
 </resources>
