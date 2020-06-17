@@ -1,6 +1,7 @@
 package com.example.sequenceonetodolist
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +11,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sequenceonetodolist.data.DataProvider
 import com.example.sequenceonetodolist.model.ItemToDo
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 /**
  * Activité affichant une todo list
@@ -35,16 +36,17 @@ class ShowListActivity : BaseActivity() {
         val bundle = this.intent.extras
         userHash = bundle!!.getString("userHash")!!
         listId = bundle.getLong("list_id")
+        items = emptyList<ItemToDo>().toMutableList()
+        recyclerView = findViewById(R.id.todo_list)
+        recyclerView.adapter = TodoListAdapter(items, this@ShowListActivity)
+        recyclerView.layoutManager = LinearLayoutManager(this@ShowListActivity)
 
         activityScope.launch {
-            items = DataProvider.items(listId, userHash).toMutableList()
+            items.addAll(dataProvider.items(listId, userHash))
             // Création de la recycler view avec les items de la todo list
-            recyclerView = findViewById(R.id.todo_list)
             // on passe l'activité à l'adapter pour que celui-ci ait une référence vers la méthode
             // toggleItem()
-            val adapter = TodoListAdapter(items, this@ShowListActivity)
-            recyclerView.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(this@ShowListActivity)
+            recyclerView.adapter!!.notifyDataSetChanged()
         }
 
         // Listener bouton
@@ -60,12 +62,19 @@ class ShowListActivity : BaseActivity() {
     private fun addNewItem() {
         val itemDescription = itemField.text.toString()
         activityScope.launch {
-            val itemId = DataProvider.addItem(listId, itemDescription, userHash)
-            if (itemId != null) {
+            try {
+                val itemId = dataProvider.addItem(listId, itemDescription, userHash)!!
                 items.add(ItemToDo(itemId, itemDescription))
                 recyclerView.adapter!!.notifyDataSetChanged()
-            } else {
-                Toast.makeText(this@ShowListActivity, "Impossible d'ajouter cet item.", Toast.LENGTH_LONG)
+            } catch (e: Exception) {
+                when (e) {
+                    is HttpException, is NullPointerException -> {
+                        Log.e("App" , e.stackTrace.toString())
+                        Log.e("App", e.message)
+                        Toast.makeText(this@ShowListActivity, "Impossible d'ajouter cet item.", Toast.LENGTH_LONG)
+                    }
+                    else -> throw e
+                }
             }
         }
     }
@@ -76,13 +85,20 @@ class ShowListActivity : BaseActivity() {
      */
     fun toggleItem(position: Int, boolean: Boolean) {
         activityScope.launch {
-            val success = DataProvider.toggleItem(listId, items[position].id!!, items[position].description, boolean, userHash)
-            if (success) {
+            try {
+                dataProvider.toggleItem(listId, items[position].id!!, boolean, userHash)
                 items[position].fait = boolean
                 recyclerView.adapter!!.notifyDataSetChanged()
-            } else {
-                Toast.makeText(this@ShowListActivity, "Impossible de modifier cet item.", Toast.LENGTH_LONG)
+            } catch (e: Exception) {
+            when (e) {
+                is HttpException -> {
+                    Log.e("App" , e.stackTrace.toString())
+                    Log.e("App", e.message)
+                    Toast.makeText(this@ShowListActivity, "Impossible de modifier cet item.", Toast.LENGTH_LONG)
+                }
+                else -> throw e
             }
+        }
         }
     }
 }

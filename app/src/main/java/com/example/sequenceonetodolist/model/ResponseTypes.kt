@@ -1,6 +1,6 @@
 package com.example.sequenceonetodolist.model
 
-data class ItemResponse(val id: Long, val label: String, val check: Boolean)
+data class ItemResponse(val id: Long, val label: String, val checked: Int)
 data class TodoListResponse(val id: Long, val label: String)
 data class AuthenticateResponse(val version: Int, val success: Boolean, val status: Int, val hash: String? = null)
 data class UsersResponse(val version: Int, val success: Boolean, val status: Int, val users: List<User>)

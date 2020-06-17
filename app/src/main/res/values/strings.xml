@@ -23,4 +23,11 @@
     <string name="preferences">Préférences</string>
     <string name="users_filename">knownUsers</string>
     <string name="password">Mot de passe</string>
+    <string name="settings_api_title">URL de l\'API</string>
+    <string name="settings_api_summary">Adresse de la racine de l\'API utilisée par l\'application</string>
+    <string name="settings_defaultUser_title">Utilisateur par défaut</string>
+    <string name="settings_defaultUser_summary">Pseudo à préremplir au démarrage de l\'application</string>
+    <string name="settings_clearHistory_title">Vider l\'historique</string>
+    <string name="settings_clearHistory_summary">Supprime les listes de tous les utilisateurs</string>
+    <string name="settings_api_default">http://tomnab.fr/todo-api/api/</string>
 </resources>

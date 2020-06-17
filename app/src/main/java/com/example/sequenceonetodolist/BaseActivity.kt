@@ -1,9 +1,12 @@
 package com.example.sequenceonetodolist
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
+import com.example.sequenceonetodolist.data.DataProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -16,6 +19,14 @@ open class BaseActivity : AppCompatActivity() {
     val activityScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Main
     )
+
+    lateinit var dataProvider: DataProvider
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        dataProvider = DataProvider(PreferenceManager.getDefaultSharedPreferences(this).getString("apiUrl", "http://tomnab.fr/todo-api/api/")!!)
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)

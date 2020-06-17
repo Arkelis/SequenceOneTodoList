@@ -10,7 +10,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sequenceonetodolist.data.DataProvider
 import com.example.sequenceonetodolist.model.TodoListResponse
 import kotlinx.coroutines.launch
 
@@ -32,15 +31,15 @@ class ChooseListActivity : BaseActivity() {
         // Récupération du pseudo transmis par la MainActivity
         val bundle = this.intent.extras
         userHash = bundle!!.getString("userHash")!!
+        recyclerView = findViewById(R.id.list)
+        userLists = emptyList<TodoListResponse>().toMutableList()
+        recyclerView.adapter = ListsAdapter(userLists, this@ChooseListActivity)
+        recyclerView.layoutManager = LinearLayoutManager(this@ChooseListActivity)
 
         activityScope.launch {
-            val lists = DataProvider.lists(userHash)
+            userLists.addAll(dataProvider.lists(userHash))
             // Création de la recycler view avec les items de l'utilisateur
-            recyclerView = findViewById(R.id.list)
-            userLists = DataProvider.lists(userHash).toMutableList()
-            val adapter = ListsAdapter(userLists, this@ChooseListActivity)
-            recyclerView.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(this@ChooseListActivity)
+            recyclerView.adapter!!.notifyDataSetChanged()
         }
 
 
@@ -58,7 +57,7 @@ class ChooseListActivity : BaseActivity() {
     private fun addNewList() {
         val listName = listField.text.toString()
         activityScope.launch {
-            val listId = DataProvider.addList(listName, userHash)
+            val listId = dataProvider.addList(listName, userHash)
             if (listId != null) {
                 userLists.add(TodoListResponse(listId, listName))
                 recyclerView.adapter!!.notifyDataSetChanged()

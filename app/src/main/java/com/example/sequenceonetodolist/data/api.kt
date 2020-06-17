@@ -26,5 +26,5 @@ public interface TodoApiService {
     suspend fun addItem(@Path("listId") listId: Long, @Field("label") itemName: String, @Query("hash") hash: String): ItemCreatedResponse
 
     @PUT("lists/{listId}/items/{itemId}")
-    suspend fun toggleItem(@Path("listId") listId: Long, @Path("itemId") itemId: Long, @Query("label") label: String, @Query("check") check: Int, @Query("hash") hash: String): ItemToggleResponse
+    suspend fun toggleItem(@Path("listId") listId: Long, @Path("itemId") itemId: Long, @Query("check") check: Int, @Query("hash") hash: String): ItemToggleResponse
 }

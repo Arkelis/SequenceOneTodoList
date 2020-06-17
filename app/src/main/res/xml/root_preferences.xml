@@ -2,12 +2,19 @@
 
     <EditTextPreference
         app:key="defaultUser"
-        app:title="Utilisateur par défaut"
-        app:summary="Pseudo à préremplir au démarrage de l'application"/>
+        app:title="@string/settings_defaultUser_title"
+        app:summary="@string/settings_defaultUser_summary"/>
+
+    <EditTextPreference
+        app:key="apiUrl"
+        app:title="@string/settings_api_title"
+        app:summary="@string/settings_api_summary"
+        app:defaultValue="@string/settings_api_default"
+            />
 
     <Preference
-        app:title="Vider l'historique"
-        app:summary="Supprime les listes de tous les utilisateurs"
+        app:title="@string/settings_clearHistory_title"
+        app:summary="@string/settings_clearHistory_summary"
         app:widgetLayout="@layout/clear_users"
     />
 

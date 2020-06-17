@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
-import com.example.sequenceonetodolist.data.DataProvider
 import kotlinx.coroutines.launch
-import java.io.File
 
 /**
  * Activité principale
@@ -37,11 +35,8 @@ class MainActivity : BaseActivity() {
         val pseudo = pseudoField.text.toString()
         val password = passwordField.text.toString()
 
-        // Ajout de l'utilisateur à la liste des utilisateurs connus s'il n'est pas déjà présent
-        val pseudoFile = File(this.filesDir, getString(R.string.users_filename))
-
         activityScope.launch {
-            val hash = DataProvider.login(pseudo, password)
+            val hash = dataProvider.login(pseudo, password)
             // On crée le bundle avec le pseudo puis on lance l'activité
             val b = Bundle()
             b.putString("userHash", hash)
